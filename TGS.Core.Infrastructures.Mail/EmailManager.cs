@@ -19,7 +19,7 @@ namespace TGS.Core.Infrastructures.Mail
             _smtpClient = smtpClient ?? throw new System.ArgumentNullException(nameof(smtpClient));
         }
 
-        public async Task SendEmailAsync(SendEmailRequest data)
+        public async Task SendEmailAsync(EmailPackage data)
         {
             if (data.To.Count == 0)
             {
@@ -44,14 +44,14 @@ namespace TGS.Core.Infrastructures.Mail
             };
         }
 
-        private static void Setup(MailMessage message, SendEmailRequest data)
+        private static void Setup(MailMessage message, EmailPackage data)
         {
             message.Subject = data.Subject;
             message.SubjectEncoding = Encoding.UTF8;
             message.BodyEncoding = Encoding.UTF8;
         }
 
-        private static void SetupContent(MailMessage message, SendEmailRequest data)
+        private static void SetupContent(MailMessage message, EmailPackage data)
         {
             var plainView = AlternateView.CreateAlternateViewFromString(
                 data.Content, null, "text/plain");
@@ -59,7 +59,7 @@ namespace TGS.Core.Infrastructures.Mail
             message.AlternateViews.Add(plainView);
         }
 
-        private static void SetupHtmlContent(MailMessage message, SendEmailRequest data)
+        private static void SetupHtmlContent(MailMessage message, EmailPackage data)
         {
             if (data.HtmlBodyContent == null)
             {
@@ -72,7 +72,7 @@ namespace TGS.Core.Infrastructures.Mail
             message.AlternateViews.Add(htmlBody);
         }
 
-        private static void SetupLinkedResource(AlternateView htmlBody, SendEmailRequest data)
+        private static void SetupLinkedResource(AlternateView htmlBody, EmailPackage data)
         {
             if (data.InlineAttachments == null || data.InlineAttachments.Length == 0)
             {
@@ -91,7 +91,7 @@ namespace TGS.Core.Infrastructures.Mail
             }
         }
 
-        private static void SetupCcReceivers(MailMessage message, SendEmailRequest data)
+        private static void SetupCcReceivers(MailMessage message, EmailPackage data)
         {
             if (data.Cc.Count > 0)
             {
@@ -99,7 +99,7 @@ namespace TGS.Core.Infrastructures.Mail
             }
         }
 
-        private static void AddAttachments(MailMessage message, SendEmailRequest data)
+        private static void AddAttachments(MailMessage message, EmailPackage data)
         {
             if (data.Attachments == null || data.Attachments.Length == 0)
             {

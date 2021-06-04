@@ -8,7 +8,7 @@ using TGS.Core.Infrastructures.Mail;
 namespace TGS.EmailApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EmailController : ControllerBase
     {
         private readonly ILogger<EmailController> _logger;
@@ -23,9 +23,16 @@ namespace TGS.EmailApi.Controllers
         [HttpPost]
         public async Task<SendEmailResponse> SendEmailAsync([FromBody]SendEmailRequest sendEmailRequest)
         {
+            EmailPackage mailMessage = new EmailPackage(
+                   sendEmailRequest.Receivers,
+                   sendEmailRequest.Subject,
+                   sendEmailRequest.Content);
+
             try
             {
-                await _emailManager.SendEmailAsync(sendEmailRequest);
+               
+                await _emailManager.SendEmailAsync(mailMessage).ConfigureAwait(false);
+
                 return new SendEmailResponse();
 
             }
@@ -39,7 +46,7 @@ namespace TGS.EmailApi.Controllers
                     {
                         Console.WriteLine("Delivery failed - retrying in 5 seconds.");
                         System.Threading.Thread.Sleep(5000);
-                        await _emailManager.SendEmailAsync(sendEmailRequest);
+                        await _emailManager.SendEmailAsync(mailMessage).ConfigureAwait(false);
                         return new SendEmailResponse();
                     }
                     else

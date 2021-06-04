@@ -1,10 +1,14 @@
 using System;
 using System.IO;
+using System.Reflection;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using TGS.Core.Infrastructures.Json;
 using TGS.Core.Infrastructures.Mail;
 
 namespace TGS.EmailApi
@@ -21,24 +25,23 @@ namespace TGS.EmailApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers();
-            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailSetting"));
-            services.AddMail();
-
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new() { Title = "TGS Email API", Version = "v1" });
-
-                c.CustomSchemaIds(type => type.FullName.Replace('.', '_'));
-
-                var xml = "TGS.EmailApi.xml";
-                var path = Path.Combine(AppContext.BaseDirectory, xml);
-                if (File.Exists(path))
-                {
-                    c.IncludeXmlComments(path);
-                }
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmailApi", Version = "v1" });
             });
+            services.Configure<EmailConfiguration>(Configuration.GetSection("EmailSetting"));
+            services.AddMail();
+            services.AddSingleton<IJsonSerializationProvider, JsonSerializationProvider>();
+
+            services.AddControllers(options => options.Filters.Add<ValidateModelFilter>())
+               .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
+               .AddFluentValidation(c =>
+               {
+                   c.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                   c.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                   c.LocalizationEnabled = false;
+                   c.ImplicitlyValidateChildProperties = true;
+               });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +50,8 @@ namespace TGS.EmailApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TGS Agent API"));
             }
 
             app.UseHttpsRedirection();
@@ -59,12 +64,6 @@ namespace TGS.EmailApi
             {
                 endpoints.MapControllers();
             });
-
-            if (!env.IsProduction())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TGS Agent API"));
-            }
         }
     }
 }
