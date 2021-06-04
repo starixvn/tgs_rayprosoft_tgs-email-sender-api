@@ -7,7 +7,7 @@ namespace TGS.Core.Infrastructures.Mail
 {
     public interface IEmailClient
     {
-        ValueTask<SendEmailResponse> SendAsync(Uri apiUrl, SendEmailRequest request);
+        ValueTask<SendEmailResponse> SendAsync(SendEmailRequest request);
     }
 
     public class EmailClient : BaseApiClient, IEmailClient
@@ -19,10 +19,10 @@ namespace TGS.Core.Infrastructures.Mail
             _json = json;
         }
 
-        ValueTask<SendEmailResponse> IEmailClient.SendAsync(Uri apiUrl, SendEmailRequest request)
+        ValueTask<SendEmailResponse> IEmailClient.SendAsync(SendEmailRequest request)
         {
             var prefix = $"Tgs.Email";
-            return ExecuteJsonRequestAsync<SendEmailRequest, SendEmailResponse>(HttpMethod.Post, apiUrl,"/api/email", request, logPrefix: prefix);
+            return ExecuteJsonRequestAsync<SendEmailRequest, SendEmailResponse>(HttpMethod.Post,"/api/email", request, logPrefix: prefix);
         }
     }
 }
