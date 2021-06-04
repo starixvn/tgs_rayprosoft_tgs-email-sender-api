@@ -1,7 +1,4 @@
-using System;
-using System.IO;
 using System.Reflection;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -33,15 +30,7 @@ namespace TGS.EmailApi
             services.AddMail();
             services.AddSingleton<IJsonSerializationProvider, JsonSerializationProvider>();
 
-            services.AddControllers(options => options.Filters.Add<ValidateModelFilter>())
-               .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true)
-               .AddFluentValidation(c =>
-               {
-                   c.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-                   c.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
-                   c.LocalizationEnabled = false;
-                   c.ImplicitlyValidateChildProperties = true;
-               });
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

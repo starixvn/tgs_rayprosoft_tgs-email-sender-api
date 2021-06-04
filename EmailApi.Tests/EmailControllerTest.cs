@@ -7,22 +7,25 @@ using TGS.EmailApi.Controllers;
 
 namespace EmailApi.Tests
 {
+    [TestFixture]
     public class EmailControllerTest
     {
         public EmailControllerTest() 
         { 
         
         }
+
+        [Test]
         public async Task Can_Send_Email_Successfully()
         {
             var loggerMock = new Mock<ILogger<EmailController>>();
             var emailNaanagerMock = new Mock<EmailManager>();
 
-            //var sendEmailRequest = new SendEmailRequest(new[] { "lester.wei@rayprosoft.com" }, "Subject Test", "Content Tests");
+            var sendEmailRequest = new SendEmailRequest(new[] { "lester.wei@rayprosoft.com" }, "Subject Test", "Content Tests");
 
-            //var controller =  new EmailController(loggerMock.Object, emailNaanagerMock.Object);
-            //var response = await controller.SendEmailAsync(sendEmailRequest);
-            Assert.IsTrue(true);
+            var controller = new EmailController(loggerMock.Object, emailNaanagerMock.Object);
+            var response = await controller.SendEmailAsync(sendEmailRequest);
+            Assert.IsTrue(response.IsSuccessful);
         }
     }
 }
