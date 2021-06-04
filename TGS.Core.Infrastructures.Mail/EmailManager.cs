@@ -5,7 +5,6 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using TGS.Core.Infrastructures.Extensions;
 
 namespace TGS.Core.Infrastructures.Mail
 {
@@ -29,7 +28,7 @@ namespace TGS.Core.Infrastructures.Mail
 
             var message = new MailMessage(
                 $"{_emailConfig.FromName} <{_emailConfig.FromMail}>",
-                data.To.Select(x => x.Address).JoinAsStringByComma());
+                string.Join(",", data.To.Select(x => x.Address)));
 
             Setup(message, data);
             SetupContent(message, data);
@@ -96,7 +95,7 @@ namespace TGS.Core.Infrastructures.Mail
         {
             if (data.Cc.Count > 0)
             {
-                message.CC.Add(data.Cc.Select(x => x.Address).JoinAsStringByComma());
+                message.CC.Add(string.Join(",", data.Cc.Select(x => x.Address)));
             }
         }
 
