@@ -7,16 +7,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["tgs-email.csproj", "."]
-RUN dotnet restore "./tgs-email.csproj"
+COPY ["EmailApi/EmailApi.csproj", "EmailApi/"]
+COPY ["TGS.Core.Infrastructures.Mail/TGS.Core.Infrastructures.Mail.csproj", "TGS.Core.Infrastructures.Mail/"]
+RUN dotnet restore "EmailApi/EmailApi.csproj"
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "tgs-email.csproj" -c Release -o /app/build
+WORKDIR "/src/EmailApi"
+RUN dotnet build "EmailApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "tgs-email.csproj" -c Release -o /app/publish
+RUN dotnet publish "EmailApi.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "tgs-email.dll"]
+ENTRYPOINT ["dotnet", "TGS.EmailApi.dll"]
