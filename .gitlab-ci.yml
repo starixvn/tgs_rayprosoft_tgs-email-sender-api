@@ -17,7 +17,7 @@ build-code:
     - dotnet build -c $BuildConfiguration
   only:
     - merge_requests
-    - main
+    - master
   cache:
     key: Tgs.EmailApi.$CI_PIPELINE_ID
     untracked: true
@@ -30,7 +30,7 @@ unit-test:
     - build-code
   only:
     - merge_requests
-    - main
+    - master
   cache:
     key: Tgs.EmailApi.$CI_PIPELINE_ID
     untracked: true
@@ -46,7 +46,7 @@ push-docker-image:
     - build-code
     - unit-test
   only:
-    - main
+    - master
   cache:
     key: Tgs.EmailApi.$CI_PIPELINE_ID
     untracked: true
@@ -61,7 +61,7 @@ push-k8s-template:
   needs:
     - unit-test
   only:
-    - main
+    - master
   script:
     - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
     - mkdir -p artifacts/k8s
@@ -90,7 +90,7 @@ deploy-dev:
     - job: push-k8s-template
       artifacts: true
   only:
-    - main
+    - master
   before_script:
     - export KUBECONFIG=$KubeConfig_Raypro_dev
   script:
@@ -136,7 +136,7 @@ deploy-staging:
     - job: push-k8s-template
       artifacts: true
   only:
-    - main
+    - master
   when: manual
   before_script:
     - export KUBECONFIG=$KubeConfig_Raypro_staging
@@ -183,7 +183,7 @@ deploy-prod:
     - job: push-k8s-template
       artifacts: true
   only:
-    - main
+    - master
   when: manual
   before_script:
     - export KUBECONFIG=$KubeConfig_Raypro_prod
