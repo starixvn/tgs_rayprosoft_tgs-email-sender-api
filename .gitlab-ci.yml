@@ -18,9 +18,6 @@ build-code:
   only:
     - merge_requests
     - master
-  cache:
-    key: Tgs.EmailApi.$CI_PIPELINE_ID
-    untracked: true
 
 unit-test:
   stage: test
@@ -31,10 +28,6 @@ unit-test:
   only:
     - merge_requests
     - master
-  cache:
-    key: Tgs.EmailApi.$CI_PIPELINE_ID
-    untracked: true
-    policy: pull
   artifacts:
     when: always
     reports:
@@ -47,10 +40,6 @@ push-docker-image:
     - unit-test
   only:
     - master
-  cache:
-    key: Tgs.EmailApi.$CI_PIPELINE_ID
-    untracked: true
-    policy: pull
   script:
     - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
     - dotnet build "EmailApi/EmailApi.csproj" -c $BuildConfiguration -t:ContainerBuild -p:DockerfileTag="$ImageName:$Tag" --no-restore
