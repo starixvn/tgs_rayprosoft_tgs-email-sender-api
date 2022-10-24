@@ -22,7 +22,7 @@ namespace TGS.Core.Infrastructures.Mail
 
         public static IServiceCollection AddMail(
             this IServiceCollection services,
-            Action<EmailConfiguration, IServiceProvider> configure = null)
+            Action<EmailConfiguration, IConfiguration> configure = null)
         {
             if (configure == null)
                 services.AddOptions<EmailConfiguration>();

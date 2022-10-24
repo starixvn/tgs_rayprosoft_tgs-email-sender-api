@@ -4,12 +4,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
+using System.Configuration;
 using System.Linq;
+using TGS.Core.Infrastructures.Json;
+using TGS.Core.Infrastructures.Mail;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +22,12 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddHealthChecks();
+
+builder.Services.AddMail((config, sp) => {
+    sp.GetSection("EmailSetting").Bind(config);
+}); 
+
+builder.Services.AddSingleton<IJsonSerializationProvider, JsonSerializationProvider>();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -42,14 +52,14 @@ builder.Logging
 
 builder.Services
     .AddOptions<OtlpExporterOptions>()
-    .Configure<IConfiguration>((options, conifg) =>
+    .Configure<IConfiguration>((options, config) =>
     {
-        var nodeIp = conifg.GetValue<string>("NODE_IP");
+        var nodeIp = config.GetValue<string>("NODE_IP");
 
         if (!string.IsNullOrWhiteSpace(nodeIp))
             options.Endpoint = new Uri($"http://{nodeIp}:4317");
 
-        conifg.GetSection("Opentelemetry:Tracing").Bind(options);
+        config.GetSection("Opentelemetry:Tracing").Bind(options);
     });
 
 builder.Services
@@ -87,23 +97,4 @@ app.UseSwaggerUI();
 app.MapControllers();
 app.MapSwagger();
 app.MapHealthChecks("/healthz");
-
 app.Run();
-
-namespace TGS.EmailApi
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
