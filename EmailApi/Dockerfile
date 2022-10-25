@@ -6,6 +6,7 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+ARG BuildConfiguration=Release
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["EmailApi/EmailApi.csproj", "EmailApi/"]
@@ -13,10 +14,11 @@ COPY ["TGS.Core.Infrastructures.Mail/TGS.Core.Infrastructures.Mail.csproj", "TGS
 RUN dotnet restore "EmailApi/EmailApi.csproj"
 COPY . .
 WORKDIR "/src/EmailApi"
-RUN dotnet build "EmailApi.csproj" -c Release -o /app/build
+RUN dotnet build "EmailApi.csproj" -c ${BuildConfiguration} -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "EmailApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG BuildConfiguration
+RUN dotnet publish "EmailApi.csproj" -c ${BuildConfiguration} -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
