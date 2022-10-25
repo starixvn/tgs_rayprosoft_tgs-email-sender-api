@@ -100,7 +100,7 @@ deploy-dev:
     - export node_selector=$(kubectl get cm tgs-settings -o jsonpath={.data.node-selector})
     - export autoscaling=$(kubectl get cm autoscaling-setting -o jsonpath={.data.$TgsSettingKey})
     - |
-      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName --set ingress.enabled=true \
+      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName --set ingress.enabled=true,autoscaling.enabled=false \
         -n $namespace \
         --name-template tgs \
         -f - 
