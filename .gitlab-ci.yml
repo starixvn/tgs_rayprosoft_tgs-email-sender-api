@@ -82,7 +82,6 @@ push-k8s-template:
 deploy-dev:
   variables:
     GIT_STRATEGY: none
-    HelmTemplateFolderName: email-api
     namespace: dev
   environment:
     name: dev
