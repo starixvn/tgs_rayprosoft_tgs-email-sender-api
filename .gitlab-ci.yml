@@ -103,6 +103,7 @@ deploy-dev:
     - |
       cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
         --set ingress.enabled=true \
+        --set autoscaling.enabled=false \
         -n $namespace \
         --name-template tgs \
         -f - 
