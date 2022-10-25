@@ -82,6 +82,7 @@ push-k8s-template:
 deploy-dev:
   variables:
     GIT_STRATEGY: none
+    HelmTemplateFolderName: email-api
     namespace: dev
   environment:
     name: dev
@@ -101,6 +102,7 @@ deploy-dev:
     - export autoscaling=$(kubectl get cm autoscaling-setting -o jsonpath={.data.$TgsSettingKey})
     - |
       cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
+        --set ingress.enabled=true \
         -n $namespace \
         --name-template tgs \
         -f - 
