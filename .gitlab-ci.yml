@@ -2,6 +2,7 @@ variables:
   ImageName: pgtgs/email-api
   TgsSettingKey: email-api
   HelmTemplateFolderName: email-api
+  BuildCacheKey: Tgs.EmailApi.$CI_PIPELINE_IID
 
 stages:
   - build
@@ -18,6 +19,9 @@ build-code:
   only:
     - merge_requests
     - master
+  cache:
+    key: $BuildCacheKey
+    untracked: true   
 
 unit-test:
   stage: test
@@ -32,6 +36,10 @@ unit-test:
     when: always
     reports:
       junit: ./TestReports/*-TestReport.xml
+  cache:
+    key: $BuildCacheKey
+    untracked: true   
+    policy: pull
 
 push-docker-image:
   stage: publish
@@ -44,6 +52,10 @@ push-docker-image:
     - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
     - dotnet build "EmailApi/EmailApi.csproj" -c $BuildConfiguration -t:ContainerBuild -p:DockerfileTag="$ImageName:$Tag" --no-restore
     - docker push $ImageName:$Tag
+  cache:
+    key: $BuildCacheKey
+    untracked: true   
+    policy: pull
 
 push-k8s-template:
   stage: publish

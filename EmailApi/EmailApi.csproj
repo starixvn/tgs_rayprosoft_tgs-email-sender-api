@@ -5,8 +5,7 @@
     <RootNamespace>TGS.EmailApi</RootNamespace>
     <UserSecretsId>880de296-e14e-4821-8ef4-c0f57a95a2e0</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>.</DockerfileContext>
-    <AssemblyName>TGS.EmailApi</AssemblyName>
+	  <AssemblyName>TGS.EmailApi</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
