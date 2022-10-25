@@ -111,19 +111,6 @@ deploy-dev:
         "autoscaling": $autoscaling
       }
       EOF
-    - |
-      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
-        -n $namespace \
-        --name-template tgs \
-        -f - \
-        | kubectl -n $namespace apply -f -
-      {
-        "nodeSelector": $node_selector,
-        "tolerations": [$dedicated],
-        "resources": $resources,
-        "autoscaling": $autoscaling
-      }
-      EOF
 
 deploy-staging:
   variables:
@@ -158,19 +145,6 @@ deploy-staging:
         "autoscaling": $autoscaling
       }
       EOF
-    - |
-      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
-        -n $namespace \
-        --name-template tgs \
-        -f - \
-        | kubectl -n $namespace apply -f -
-      {
-        "nodeSelector": $node_selector,
-        "tolerations": [$dedicated],
-        "resources": $resources,
-        "autoscaling": $autoscaling
-      }
-      EOF
 
 deploy-prod:
   variables:
@@ -198,19 +172,6 @@ deploy-prod:
         -n $namespace \
         --name-template tgs \
         -f - 
-      {
-        "nodeSelector": $node_selector,
-        "tolerations": [$dedicated],
-        "resources": $resources,
-        "autoscaling": $autoscaling
-      }
-      EOF
-    - |
-      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
-        -n $namespace \
-        --name-template tgs \
-        -f - \
-        | kubectl -n $namespace apply -f -
       {
         "nodeSelector": $node_selector,
         "tolerations": [$dedicated],
