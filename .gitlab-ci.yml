@@ -173,7 +173,7 @@ deploy-staging:
         --set ingress.hosts[0].paths[0].pathType=Prefix \
         -n $namespace \
         --name-template tgs \
-        -f -
+        -f - \
         | kubectl -n $namespace apply -f -
       {
         "nodeSelector": $node_selector,
