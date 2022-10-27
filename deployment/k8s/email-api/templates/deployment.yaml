@@ -38,6 +38,11 @@ spec:
               containerPort: 80
               protocol: TCP
           env:
+            - name: EmailSetting__Password
+              valueFrom:
+                secretKeyRef:
+                  name: tgs-connections
+                  key: tgs-email-password
             - name: OTEL_SERVICE_NAME
               value: Email-Api({{ .Release.Namespace }})
             - name: NODE_IP

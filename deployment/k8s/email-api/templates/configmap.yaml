@@ -10,8 +10,7 @@ data:
         "FromMail": "no-reply@verime99.com",
         "FromName": "no-reply",
         "SmtpServer": "smtp.gmail.com",
-        "Port": 587,
-        "Password": "gcvihkcfymgqmibz"
+        "Port": 587
       },
       "Logging": {
         "LogLevel": {
