@@ -101,7 +101,9 @@ deploy-dev:
     - export autoscaling=$(kubectl get cm autoscaling-setting -o jsonpath={.data.$TgsSettingKey})
     - |
       cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
-        --set ingress.hosts[0].host=dev-email.rpgp.cc
+        --set ingress.hosts[0].host=dev-email.rpgp.cc \
+        --set ingress.hosts[0].host.paths[0].path=/ \
+        --set ingress.hosts[0].host.paths[0].pathType=Prefix \
         -n $namespace \
         --name-template tgs \
         -f - 
