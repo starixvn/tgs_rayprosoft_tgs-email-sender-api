@@ -102,8 +102,8 @@ deploy-dev:
     - |
       cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
         --set ingress.hosts[0].host=dev-email.rpgp.cc \
-        --set ingress.hosts[0].host.paths[0].path=/ \
-        --set ingress.hosts[0].host.paths[0].pathType=Prefix \
+        --set ingress.hosts[0].paths[0].path=/ \
+        --set ingress.hosts[0].paths[0].pathType=Prefix \
         -n $namespace \
         --name-template tgs \
         -f - 
