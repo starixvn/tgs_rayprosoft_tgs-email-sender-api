@@ -114,7 +114,22 @@ deploy-dev:
         "autoscaling": $autoscaling
       }
       EOF
-
+    - |
+      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
+        --set ingress.hosts[0].host=dev-email.rpgp.cc \
+        --set ingress.hosts[0].paths[0].path=/ \
+        --set ingress.hosts[0].paths[0].pathType=Prefix \
+        -n $namespace \
+        --name-template tgs \
+        -f - \
+        | kubectl -n $namespace apply -f -
+      {
+        "nodeSelector": $node_selector,
+        "tolerations": [$dedicated],
+        "resources": $resources,
+        "autoscaling": $autoscaling
+      }
+      EOF
 deploy-staging:
   variables:
     GIT_STRATEGY: none
@@ -138,9 +153,28 @@ deploy-staging:
     - export autoscaling=$(kubectl get cm autoscaling-setting -o jsonpath={.data.$TgsSettingKey})
     - |
       cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
+        --set ingress.hosts[0].host=stg-email.rpgp.cc \
+        --set ingress.hosts[0].paths[0].path=/ \
+        --set ingress.hosts[0].paths[0].pathType=Prefix \
         -n $namespace \
         --name-template tgs \
         -f - 
+      {
+        "nodeSelector": $node_selector,
+        "tolerations": [$dedicated],
+        "resources": $resources,
+        "autoscaling": $autoscaling
+      }
+      EOF
+    - |
+      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
+        --set ingress.hosts[0].host=stg-email.rpgp.cc \
+        --set ingress.hosts[0].paths[0].path=/ \
+        --set ingress.hosts[0].paths[0].pathType=Prefix \
+        -n $namespace \
+        --name-template tgs \
+        -f -
+        | kubectl -n $namespace apply -f -
       {
         "nodeSelector": $node_selector,
         "tolerations": [$dedicated],
@@ -172,9 +206,28 @@ deploy-prod:
     - export autoscaling=$(kubectl get cm autoscaling-setting -o jsonpath={.data.$TgsSettingKey})
     - |
       cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
+        --set ingress.hosts[0].host=email.rpgp.cc \
+        --set ingress.hosts[0].paths[0].path=/ \
+        --set ingress.hosts[0].paths[0].pathType=Prefix \
         -n $namespace \
         --name-template tgs \
         -f - 
+      {
+        "nodeSelector": $node_selector,
+        "tolerations": [$dedicated],
+        "resources": $resources,
+        "autoscaling": $autoscaling
+      }
+      EOF
+    - |
+      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
+        --set ingress.hosts[0].host=email.rpgp.cc \
+        --set ingress.hosts[0].paths[0].path=/ \
+        --set ingress.hosts[0].paths[0].pathType=Prefix \
+        -n $namespace \
+        --name-template tgs \
+        -f - \
+        | kubectl -n $namespace apply -f -
       {
         "nodeSelector": $node_selector,
         "tolerations": [$dedicated],
