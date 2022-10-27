@@ -96,6 +96,10 @@ spec:
         - name: appsettings
           configMap:
             name: {{ include "email-api.fullname" . }}
+        - name: diagvol
+          emptyDir: {}
+        - name: dumpsvol
+          emptyDir: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
