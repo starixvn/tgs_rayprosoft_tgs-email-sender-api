@@ -9,8 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.136" />
     <PackageReference Include="FluentdForward.OpenTelemetry.Exporter.Logs" Version="0.2.0" />
     <PackageReference Include="FluentdForward.OpenTelemetry.MessagePack" Version="0.2.0" />
+    <PackageReference Include="MailKit" Version="4.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
     <PackageReference Include="OpenTelemetry" Version="1.3.1" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.3.1" />
@@ -20,10 +22,6 @@
     <PackageReference Include="Quartz.OpenTelemetry.Instrumentation" Version="3.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TGS.Core.Infrastructures.Mail\TGS.Core.Infrastructures.Mail.csproj" />
   </ItemGroup>
 
 </Project>

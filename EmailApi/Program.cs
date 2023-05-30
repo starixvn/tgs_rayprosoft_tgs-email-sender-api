@@ -1,19 +1,14 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
-using System.Configuration;
 using System.Linq;
-using TGS.Core.Infrastructures.Json;
-using TGS.Core.Infrastructures.Mail;
+using TGS.EmailApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,13 +18,10 @@ builder.Configuration
 
 builder.Services.AddHealthChecks();
 
-builder.Services.AddMail((config, sp) => {
-    sp.GetSection("EmailSetting").Bind(config);
+builder.Services.AddMailKit((config, sp) => {
+    sp.GetSection("EmailKitSetting").Bind(config);
 }); 
 
-builder.Services.AddSingleton<IJsonSerializationProvider, JsonSerializationProvider>();
-
-// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

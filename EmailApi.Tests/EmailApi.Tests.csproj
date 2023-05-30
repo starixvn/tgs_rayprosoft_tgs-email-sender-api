@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EmailApi\EmailApi.csproj" />
-    <ProjectReference Include="..\TGS.Core.Infrastructures.Mail\TGS.Core.Infrastructures.Mail.csproj" />
   </ItemGroup>
 
 </Project>

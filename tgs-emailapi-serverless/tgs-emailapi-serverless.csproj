@@ -14,7 +14,4 @@
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.2.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TGS.Core.Infrastructures.Mail\TGS.Core.Infrastructures.Mail.csproj" />
-  </ItemGroup>
 </Project>
