@@ -1,16 +1,19 @@
-using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
-using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
+using System.Configuration;
 using System.Linq;
-using TGS.EmailApi.Extensions;
+using TGS.Core.Infrastructures.Json;
+using TGS.Core.Infrastructures.Mail;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +23,13 @@ builder.Configuration
 
 builder.Services.AddHealthChecks();
 
-builder.Services.AddMailKit((config, sp) => {
-    sp.GetSection("EmailKitSetting").Bind(config);
+builder.Services.AddMail((config, sp) => {
+    sp.GetSection("EmailSetting").Bind(config);
 }); 
 
+builder.Services.AddSingleton<IJsonSerializationProvider, JsonSerializationProvider>();
+
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -40,9 +46,7 @@ builder.Logging
             var nodeIp = builder.Configuration.GetValue<string>("NODE_IP");
             fluentOptions.Host = nodeIp;
             fluentOptions.Tag = builder.Configuration.GetValue<string>("OTEL_SERVICE_NAME");
-            fluentOptions.UseMessagePack(LogRecordFormatterResolver.GetResolverInstanceWithExtendInfo(
-                "MachineName",
-                () => Environment.MachineName));
+            fluentOptions.UseMessagePack();
         });
     });
 
@@ -59,8 +63,7 @@ builder.Services
     });
 
 builder.Services
-    .AddOpenTelemetry()
-    .WithTracing(builder => builder
+    .AddOpenTelemetryTracing(builder => builder
         .SetResourceBuilder(ResourceBuilder.CreateDefault()
             .AddEnvironmentVariableDetector())
         .AddSource("Tgs.*")
@@ -68,13 +71,6 @@ builder.Services
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter())
-    .WithMetrics(meterBuiler => meterBuiler
-        .SetResourceBuilder(ResourceBuilder.CreateDefault()
-            .AddEnvironmentVariableDetector())
-            .AddRuntimeInstrumentation()
-            .AddAspNetCoreInstrumentation()
-            .AddOtlpExporter())
-    .Services
     .Configure<AspNetCoreInstrumentationOptions>(options =>
     {
         options.Filter = httpContext =>

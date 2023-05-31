@@ -1,10 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System.Threading.Tasks;
+using TGS.Core.Infrastructures.Mail;
 using TGS.EmailApi.Controllers;
-using TGS.EmailApi.Models;
-using TGS.EmailApi.Services;
 
 namespace EmailApi.Tests
 {
@@ -20,7 +19,7 @@ namespace EmailApi.Tests
         public async Task Can_Send_Email_Successfully()
         {
             var loggerMock = new Mock<ILogger<EmailController>>();
-            var emailNaanagerMock = new Mock<IEmailService>();
+            var emailNaanagerMock = new Mock<EmailManager>();
 
             var sendEmailRequest = new SendEmailRequest(new[] { "admin@rayprosoft.com" }, "Subject Test", "Content Tests");
 

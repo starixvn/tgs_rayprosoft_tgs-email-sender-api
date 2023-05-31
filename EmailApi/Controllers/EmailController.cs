@@ -3,8 +3,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TGS.EmailApi.Models;
-using TGS.EmailApi.Services;
+using TGS.Core.Infrastructures.Mail;
 
 namespace TGS.EmailApi.Controllers
 {
@@ -13,21 +12,29 @@ namespace TGS.EmailApi.Controllers
     public class EmailController : ControllerBase
     {
         private readonly ILogger<EmailController> _logger;
-        private readonly IEmailService _emailServiceWithMailKit;
+        private readonly IEmailManager  _emailManager;
 
-        public EmailController(ILogger<EmailController> logger, IEmailService emailServiceWithMailKit)
+        public EmailController(ILogger<EmailController> logger, IEmailManager emailManager)
         {
             _logger = logger;
-            _emailServiceWithMailKit = emailServiceWithMailKit;
+            _emailManager = emailManager;
         }
 
         [HttpPost]
         public async Task<SendEmailResponse> SendEmailAsync([FromBody]SendEmailRequest sendEmailRequest)
         {
+            EmailPackage mailMessage = new EmailPackage(
+                   sendEmailRequest.Receivers,
+                   sendEmailRequest.Subject,
+                   sendEmailRequest.Content);
+
             try
-            {    
-                await _emailServiceWithMailKit.SendAsync(sendEmailRequest);
+            {
+               
+                await _emailManager.SendEmailAsync(mailMessage).ConfigureAwait(false);
+
                 return new SendEmailResponse();
+
             }
             catch (SmtpFailedRecipientsException ex)
             {
@@ -39,7 +46,7 @@ namespace TGS.EmailApi.Controllers
                     {
                         Console.WriteLine("Delivery failed - retrying in 5 seconds.");
                         System.Threading.Thread.Sleep(5000);
-                        await _emailServiceWithMailKit.SendAsync(sendEmailRequest);
+                        await _emailManager.SendEmailAsync(mailMessage).ConfigureAwait(false);
                         return new SendEmailResponse();
                     }
                     else
