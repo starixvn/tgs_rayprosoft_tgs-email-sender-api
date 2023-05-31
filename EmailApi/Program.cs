@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
@@ -63,7 +64,8 @@ builder.Services
     });
 
 builder.Services
-    .AddOpenTelemetryTracing(builder => builder
+    .AddOpenTelemetry()
+        .WithTracing(builder => builder
         .SetResourceBuilder(ResourceBuilder.CreateDefault()
             .AddEnvironmentVariableDetector())
         .AddSource("Tgs.*")
@@ -71,6 +73,13 @@ builder.Services
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter())
+    .WithMetrics(meterBuiler => meterBuiler
+        .SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddEnvironmentVariableDetector())
+            .AddRuntimeInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddOtlpExporter())
+    .Services
     .Configure<AspNetCoreInstrumentationOptions>(options =>
     {
         options.Filter = httpContext =>
