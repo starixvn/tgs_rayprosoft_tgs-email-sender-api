@@ -18,6 +18,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc8" />
     <PackageReference Include="opentelemetry.instrumentation.http" Version="1.0.0-rc8" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.0.0" />
+    <PackageReference Include="ProfileViewer.OpenTelemetry.Exporter" Version="0.2.1" />
     <PackageReference Include="Quartz.OpenTelemetry.Instrumentation" Version="3.6.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />

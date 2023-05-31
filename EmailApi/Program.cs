@@ -1,18 +1,13 @@
 using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
-using System.Configuration;
 using System.Linq;
 using TGS.Core.Infrastructures.Json;
 using TGS.Core.Infrastructures.Mail;
@@ -63,6 +58,7 @@ builder.Services
         .AddSource("TGS.*")
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
+        .AddProfileViewExporter()
         .AddOtlpExporter())
     .WithMetrics(meterBuiler => meterBuiler
         .SetResourceBuilder(ResourceBuilder.CreateDefault()
@@ -79,6 +75,7 @@ builder.Services
                 || !httpContext.Request.Path.StartsWithSegments("/swagger")
                 && !httpContext.Request.Path.StartsWithSegments("/healthz")
                 && !httpContext.Request.Path.StartsWithSegments("/profiler/")
+                && !httpContext.Request.Path.StartsWithSegments("/metrics/")
                 && !new[]
                 {
                     "html",
@@ -88,7 +85,7 @@ builder.Services
                 }.Any(
                     ext => httpContext.Request.Path.Value.EndsWith($".{ext}"));
         };
-    });
+    }).AddProfileViewer();
 
 var app = builder.Build();
 
