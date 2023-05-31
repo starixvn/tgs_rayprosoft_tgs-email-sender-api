@@ -9,7 +9,7 @@ data:
       "EmailSetting": {
         "FromMail": "no-reply2@verime99.com",
         "FromName": "no-reply",
-        "SmtpServer": "email.privateemail.com",
+        "SmtpServer": "mail.privateemail.com",
         "Port": 587
       },
       "Logging": {
