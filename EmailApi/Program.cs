@@ -1,3 +1,4 @@
+using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -47,20 +48,10 @@ builder.Logging
             var nodeIp = builder.Configuration.GetValue<string>("NODE_IP");
             fluentOptions.Host = nodeIp;
             fluentOptions.Tag = builder.Configuration.GetValue<string>("OTEL_SERVICE_NAME");
-            fluentOptions.UseMessagePack();
+            fluentOptions.UseMessagePack(LogRecordFormatterResolver.GetResolverInstanceWithExtendInfo(
+                "MachineName",
+                () => Environment.MachineName));
         });
-    });
-
-builder.Services
-    .AddOptions<OtlpExporterOptions>()
-    .Configure<IConfiguration>((options, config) =>
-    {
-        var nodeIp = config.GetValue<string>("NODE_IP");
-
-        if (!string.IsNullOrWhiteSpace(nodeIp))
-            options.Endpoint = new Uri($"http://{nodeIp}:4317");
-
-        config.GetSection("Opentelemetry:Tracing").Bind(options);
     });
 
 builder.Services
