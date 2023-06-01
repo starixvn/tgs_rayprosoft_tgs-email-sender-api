@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TGS.EmailApi.Models;
 using TGS.EmailApi.Services;
 
@@ -32,7 +32,9 @@ namespace TGS.EmailApi.Controllers
                    sendEmailRequest.Subject,
                    sendEmailRequest.Content);
             try
-            {  
+            {
+                _logger.LogInformation($"Receiver:{String.Join(',', sendEmailRequest.Receivers)}");
+                _logger.LogInformation($"Content:{sendEmailRequest.Content}");
                 await _emailService.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
                 return new SendEmailResponse();
             }
