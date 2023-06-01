@@ -34,7 +34,7 @@ namespace TGS.EmailApi.Controllers
             try
             {
                
-                await _emailManager.SendEmailAsync(mailMessage).ConfigureAwait(false);
+                await _emailManager.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
 
                 return new SendEmailResponse();
 
@@ -49,7 +49,7 @@ namespace TGS.EmailApi.Controllers
                     {
                         Console.WriteLine("Delivery failed - retrying in 5 seconds.");
                         System.Threading.Thread.Sleep(5000);
-                        await _emailManager.SendEmailAsync(mailMessage).ConfigureAwait(false);
+                        await _emailManager.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
                         return new SendEmailResponse();
                     }
                     else

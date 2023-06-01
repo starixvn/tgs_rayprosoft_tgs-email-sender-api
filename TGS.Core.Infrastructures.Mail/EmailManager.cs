@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -19,7 +20,7 @@ namespace TGS.Core.Infrastructures.Mail
             _smtpClient = smtpClient ?? throw new System.ArgumentNullException(nameof(smtpClient));
         }
 
-        public async Task SendEmailAsync(EmailPackage data)
+        public async Task SendEmailAsync(EmailPackage data, ActivitySource source)
         {
             if (data.To.Count == 0)
             {
@@ -36,12 +37,15 @@ namespace TGS.Core.Infrastructures.Mail
             SetupCcReceivers(message, data);
             AddAttachments(message, data);
 
-            await _smtpClient.SendMailAsync(message);
-            _smtpClient.SendCompleted += (_, _) =>
+            using (Activity a = source.StartActivity("SmtpClient.SendEmail"))
             {
-                _smtpClient.Dispose();
-                message.Dispose();
-            };
+                await _smtpClient.SendMailAsync(message);
+                _smtpClient.SendCompleted += (_, _) =>
+                {
+                    _smtpClient.Dispose();
+                    message.Dispose();
+                };
+            }
         }
 
         private static void Setup(MailMessage message, EmailPackage data)
