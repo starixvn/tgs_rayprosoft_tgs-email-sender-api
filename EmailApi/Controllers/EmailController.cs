@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ namespace TGS.EmailApi.Controllers
     [Route("api/[controller]")]
     public class EmailController : ControllerBase
     {
+        private static readonly ActivitySource _emailControllerSource = new($"TGS.Apis.EmailApi.Controller.{nameof(EmailController)}");
         private readonly ILogger<EmailController> _logger;
         private readonly IEmailManager  _emailManager;
 
@@ -23,6 +25,7 @@ namespace TGS.EmailApi.Controllers
         [HttpPost]
         public async Task<SendEmailResponse> SendEmailAsync([FromBody]SendEmailRequest sendEmailRequest)
         {
+            using var activity = _emailControllerSource.StartActivity(nameof(EmailController));
             EmailPackage mailMessage = new EmailPackage(
                    sendEmailRequest.Receivers,
                    sendEmailRequest.Subject,
