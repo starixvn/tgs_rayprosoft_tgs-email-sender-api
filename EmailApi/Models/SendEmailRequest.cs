@@ -1,4 +1,4 @@
-﻿namespace TGS.Core.Infrastructures.Mail
+﻿namespace TGS.EmailApi.Models
 {
     public class SendEmailRequest
     {

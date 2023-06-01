@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Primitives;
-using System.Collections.Generic;
-
-namespace TGS.Core.Infrastructures.Mail
+﻿namespace TGS.EmailApi.Models
 {
     public class EmailConfiguration
     {

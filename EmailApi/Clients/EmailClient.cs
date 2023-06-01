@@ -1,9 +1,9 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using TGS.Core.Infrastructures.Json;
+using TGS.EmailApi.Models;
+using TGS.EmailApi.Services;
 
-namespace TGS.Core.Infrastructures.Mail
+namespace TGS.EmailApi.Clients
 {
     public interface IEmailClient
     {

@@ -9,7 +9,6 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["EmailApi/EmailApi.csproj", "EmailApi/"]
-COPY ["TGS.Core.Infrastructures.Mail/TGS.Core.Infrastructures.Mail.csproj", "TGS.Core.Infrastructures.Mail/"]
 RUN dotnet restore "EmailApi/EmailApi.csproj"
 COPY . .
 WORKDIR "/src/EmailApi"

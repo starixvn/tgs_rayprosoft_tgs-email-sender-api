@@ -4,7 +4,8 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TGS.Core.Infrastructures.Mail;
+using TGS.EmailApi.Models;
+using TGS.EmailApi.Services;
 
 namespace TGS.EmailApi.Controllers
 {
@@ -14,12 +15,12 @@ namespace TGS.EmailApi.Controllers
     {
         private static readonly ActivitySource _emailControllerSource = new($"TGS.Apis.EmailApi.Controller.{nameof(EmailController)}");
         private readonly ILogger<EmailController> _logger;
-        private readonly IEmailManager  _emailManager;
+        private readonly IEmailService _emailService;
 
-        public EmailController(ILogger<EmailController> logger, IEmailManager emailManager)
+        public EmailController(ILogger<EmailController> logger, IEmailService emailService)
         {
             _logger = logger;
-            _emailManager = emailManager;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -30,14 +31,10 @@ namespace TGS.EmailApi.Controllers
                    sendEmailRequest.Receivers,
                    sendEmailRequest.Subject,
                    sendEmailRequest.Content);
-
             try
-            {
-               
-                await _emailManager.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
-
+            {  
+                await _emailService.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
                 return new SendEmailResponse();
-
             }
             catch (SmtpFailedRecipientsException ex)
             {
@@ -49,7 +46,7 @@ namespace TGS.EmailApi.Controllers
                     {
                         Console.WriteLine("Delivery failed - retrying in 5 seconds.");
                         System.Threading.Thread.Sleep(5000);
-                        await _emailManager.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
+                        await _emailService.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
                         return new SendEmailResponse();
                     }
                     else

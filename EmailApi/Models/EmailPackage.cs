@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Mail;
 
-namespace TGS.Core.Infrastructures.Mail
+namespace TGS.EmailApi.Models
 {
     public record EmailPackage
     {

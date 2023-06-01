@@ -24,8 +24,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TGS.Core.Infrastructures.Mail\TGS.Core.Infrastructures.Mail.csproj" />
-  </ItemGroup>
-
 </Project>

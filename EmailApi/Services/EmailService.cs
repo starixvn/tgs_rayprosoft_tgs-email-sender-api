@@ -6,15 +6,21 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using TGS.EmailApi.Models;
 
-namespace TGS.Core.Infrastructures.Mail
+namespace TGS.EmailApi.Services
 {
-    public sealed class EmailManager : IEmailManager
+    public interface IEmailService
+    {
+        Task SendEmailAsync(EmailPackage message, ActivitySource source);
+    }
+
+    public sealed class EmailService : IEmailService
     {
         private readonly EmailConfiguration _emailConfig;
         private readonly SmtpClient _smtpClient;
 
-        public EmailManager(IOptions<EmailConfiguration> emailConfigAccessor, SmtpClient smtpClient)
+        public EmailService(IOptions<EmailConfiguration> emailConfigAccessor, SmtpClient smtpClient)
         {
             _emailConfig = emailConfigAccessor.Value;
             _smtpClient = smtpClient ?? throw new System.ArgumentNullException(nameof(smtpClient));

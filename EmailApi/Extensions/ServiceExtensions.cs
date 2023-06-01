@@ -4,8 +4,10 @@ using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using TGS.EmailApi.Models;
+using TGS.EmailApi.Services;
 
-namespace TGS.Core.Infrastructures.Mail
+namespace TGS.EmailApi.Extensions
 {
     public static class ServiceExtensions
     {
@@ -32,7 +34,7 @@ namespace TGS.Core.Infrastructures.Mail
                     .Configure(configure);
 
             services
-                .AddTransient<IEmailManager, EmailManager>()
+                .AddTransient<IEmailService, EmailService>()
                 .AddTransient(sp =>
                 {
                     var emailConfig = sp.GetRequiredService<IOptions<EmailConfiguration>>().Value;

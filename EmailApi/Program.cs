@@ -9,8 +9,8 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using System;
 using System.Linq;
-using TGS.Core.Infrastructures.Json;
-using TGS.Core.Infrastructures.Mail;
+using TGS.EmailApi.Extensions;
+using TGS.EmailApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

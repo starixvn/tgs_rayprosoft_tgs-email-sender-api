@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using TGS.Core.Infrastructures.Json;
+using TGS.EmailApi.Services;
 
-namespace TGS.Core.Infrastructures.Mail
+namespace TGS.EmailApi.Clients
 {
     public abstract class BaseApiClient
     {
