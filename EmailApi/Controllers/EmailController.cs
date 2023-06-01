@@ -13,7 +13,7 @@ namespace TGS.EmailApi.Controllers
     [Route("api/[controller]")]
     public class EmailController : ControllerBase
     {
-        private static readonly ActivitySource _emailControllerSource = new($"TGS.Apis.EmailApi.Controller.{nameof(EmailController)}");
+        private static readonly ActivitySource _emailControllerSource = new($"TGS.EmailApi.Controller.{nameof(EmailController)}");
         private readonly ILogger<EmailController> _logger;
         private readonly IEmailService _emailService;
 
