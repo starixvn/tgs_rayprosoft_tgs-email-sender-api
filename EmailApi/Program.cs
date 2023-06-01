@@ -93,5 +93,6 @@ app.UseSwaggerUI();
 
 app.MapControllers();
 app.MapSwagger();
+app.MapProfileViewer();
 app.MapHealthChecks("/healthz");
 app.Run();
