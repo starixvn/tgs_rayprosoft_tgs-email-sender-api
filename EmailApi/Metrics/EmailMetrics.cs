@@ -19,16 +19,25 @@ namespace TGS.EmailApi.Metrics
                 () =>
                 {
                     var memoryInfo = GC.GetGCMemoryInfo();
-
+                    Console.WriteLine($"email.memory.available => {memoryInfo}");
                     return new Measurement<long>(memoryInfo.TotalAvailableMemoryBytes);
                 },
                 "Bytes");
 
             _ = _meter.CreateObservableGauge(
                 "email.memory.total",
-                () => new Measurement<long>(GC.GetTotalMemory(false)));
+                () =>
+                {
+                    var totalMemory = GC.GetTotalMemory(false);
+                    Console.WriteLine($"email.memory.total => {totalMemory}");
+                    return new Measurement<long>(totalMemory);
+                });
 
-            _ = _meter.CreateObservableGauge("processing.emails", () => _ProcessPlayerCount, "numbers of email");
+            _ = _meter.CreateObservableGauge("processing.emails", () => 
+            {
+                Console.WriteLine($"processing.emails => {_ProcessPlayerCount}");
+                return _ProcessPlayerCount;
+            }, "numbers of email");
 
             _Listener = new MeterListener();
 
