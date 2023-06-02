@@ -17,7 +17,6 @@ namespace TGS.EmailApi.Metrics
         public EmailMetrics()
         {
             _ProcessEmails = _meter.CreateHistogram<int>("processing.email.count");
-            _ProcessEmailCount = _meter.CreateCounter<int>("process-email-count");
 
             _ = _meter.CreateObservableGauge(
                 "email.memory.available",
@@ -38,7 +37,7 @@ namespace TGS.EmailApi.Metrics
                     return new Measurement<long>(totalMemory);
                 });
 
-            _ = _meter.CreateCounter<int>("email-count", "Email");
+            _ProcessEmailCount = _meter.CreateCounter<int>("email-count", "Email");
 
             _Listener = new MeterListener();
             _Listener.EnableMeasurementEvents(_ProcessEmails);
@@ -53,7 +52,6 @@ namespace TGS.EmailApi.Metrics
                 meterListener.EnableMeasurementEvents(instrument);
                 Console.WriteLine($"InstrumentPublished => EnableMeasurementEvents {instrument.Name} ");
             };
-
 
             _Listener.Start();
         }
