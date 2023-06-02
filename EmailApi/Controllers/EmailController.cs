@@ -2,7 +2,10 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Mail;
+using System.Reflection.PortableExecutable;
+using System.Text;
 using System.Threading.Tasks;
 using TGS.EmailApi.Models;
 using TGS.EmailApi.Services;
@@ -26,10 +29,12 @@ namespace TGS.EmailApi.Controllers
         [HttpPost]
         public async Task<SendEmailResponse> SendEmailAsync([FromBody]SendEmailRequest sendEmailRequest)
         {
+            var stringBuilder = new StringBuilder();
             foreach (var header in Request.Headers)
             {
-                _logger.LogWarning($"key:{header.Key}, value:{header.Value}");
+                stringBuilder.Append($"key:{header.Key}, value:{header.Value}\n");
             }
+            _logger.LogInformation(stringBuilder.ToString());
 
             using var activity = _emailControllerSource.StartActivity(nameof(EmailController));
             EmailPackage mailMessage = new EmailPackage(
