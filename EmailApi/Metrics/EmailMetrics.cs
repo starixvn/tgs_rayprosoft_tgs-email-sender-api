@@ -15,7 +15,7 @@ namespace TGS.EmailApi.Metrics
             _ProcessEmails = _EmailBucketMeter.CreateHistogram<int>("processing.email.count");
 
             _ = _EmailBucketMeter.CreateObservableGauge(
-                "memory.available",
+                "email.memory.available",
                 () =>
                 {
                     var memoryInfo = GC.GetGCMemoryInfo();
