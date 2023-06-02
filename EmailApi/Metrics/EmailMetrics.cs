@@ -8,7 +8,7 @@ namespace TGS.EmailApi.Metrics
     public class EmailMetrics
     {
         private readonly Histogram<int> _ProcessEmails;
-        private Counter<int> _ProcessEmailCount;
+        private Counter<int> _ProcessEmailCount  { get; }
         private readonly Meter _meter = new("Tgs.EmailBucket");
         private readonly MeterListener _Listener;
 
