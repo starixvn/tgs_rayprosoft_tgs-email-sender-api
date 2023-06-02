@@ -5,16 +5,16 @@ namespace TGS.EmailApi.Metrics
 {
     public class EmailMetrics
     {
-        internal static readonly Histogram<int> _ProcessPlayers;
-        private static readonly Meter _PlayerBucketMeter = new("Tgs.PlayerBucket");
+        internal static readonly Histogram<int> _ProcessEmails;
+        private static readonly Meter _EmailBucketMeter = new("Tgs.EmailBucket");
         private static readonly MeterListener _Listener;
         private static int _ProcessPlayerCount;
 
         static EmailMetrics()
         {
-            _ProcessPlayers = _PlayerBucketMeter.CreateHistogram<int>("processing.email.count");
+            _ProcessEmails = _EmailBucketMeter.CreateHistogram<int>("processing.email.count");
 
-            _ = _PlayerBucketMeter.CreateObservableGauge(
+            _ = _EmailBucketMeter.CreateObservableGauge(
                 "memory.available",
                 () =>
                 {
@@ -24,15 +24,15 @@ namespace TGS.EmailApi.Metrics
                 },
                 "Bytes");
 
-            _ = _PlayerBucketMeter.CreateObservableGauge(
-                "memory.total",
+            _ = _EmailBucketMeter.CreateObservableGauge(
+                "email.memory.total",
                 () => new Measurement<long>(GC.GetTotalMemory(false)));
 
-            _ = _PlayerBucketMeter.CreateObservableGauge("processing.players", () => _ProcessPlayerCount, "numbers of people");
+            _ = _EmailBucketMeter.CreateObservableGauge("processing.emails", () => _ProcessPlayerCount, "numbers of email");
 
             _Listener = new MeterListener();
 
-            _Listener.EnableMeasurementEvents(_ProcessPlayers);
+            _Listener.EnableMeasurementEvents(_ProcessEmails);
 
             _Listener.SetMeasurementEventCallback<int>(
                 (instrument, measurement, tags, _) => _ProcessPlayerCount = measurement);

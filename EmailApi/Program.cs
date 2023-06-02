@@ -10,6 +10,7 @@ using OpenTelemetry.Trace;
 using System;
 using System.Linq;
 using TGS.EmailApi.Extensions;
+using TGS.EmailApi.Metrics;
 using TGS.EmailApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +32,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 builder.Logging
     .AddOpenTelemetry(options =>
@@ -63,6 +63,8 @@ builder.Services
     .WithMetrics(meterBuiler => meterBuiler
         .SetResourceBuilder(ResourceBuilder.CreateDefault()
             .AddEnvironmentVariableDetector())
+            .AddMeter("Tgs.EmailBucket")
+            .AddInstrumentation<EmailMetrics>()
             .AddRuntimeInstrumentation()
             .AddAspNetCoreInstrumentation()
             .AddOtlpExporter())
@@ -88,10 +90,8 @@ builder.Services
     }).AddProfileViewer();
 
 var app = builder.Build();
-
-app.UseSwaggerUI();
-
 app.MapControllers();
+app.UseSwaggerUI();
 app.MapSwagger();
 app.MapProfileViewer();
 app.MapHealthChecks("/healthz");

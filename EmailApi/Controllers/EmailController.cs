@@ -2,9 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Net.Mail;
-using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using TGS.EmailApi.Models;
