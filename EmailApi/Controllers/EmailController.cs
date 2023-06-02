@@ -26,6 +26,11 @@ namespace TGS.EmailApi.Controllers
         [HttpPost]
         public async Task<SendEmailResponse> SendEmailAsync([FromBody]SendEmailRequest sendEmailRequest)
         {
+            foreach (var header in Request.Headers)
+            {
+                _logger.LogWarning($"key:{header.Key}, value:{header.Value}");
+            }
+
             using var activity = _emailControllerSource.StartActivity(nameof(EmailController));
             EmailPackage mailMessage = new EmailPackage(
                    sendEmailRequest.Receivers,
