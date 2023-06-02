@@ -1,18 +1,23 @@
-﻿using System;
+﻿// https://www.mytechramblings.com/posts/getting-started-with-opentelemetry-metrics-and-dotnet-part-2/
+using System;
 using System.Diagnostics.Metrics;
+using System.Threading;
 
 namespace TGS.EmailApi.Metrics
 {
     public class EmailMetrics
     {
-        internal static readonly Histogram<int> _ProcessEmails;
-        private static readonly Meter _meter = new("Tgs.EmailBucket");
-        private static readonly MeterListener _Listener;
-        private static int _ProcessPlayerCount;
+        private readonly Histogram<int> _ProcessEmails;
+        private Counter<int> _ProcessEmailCount;
+        private readonly Meter _meter = new("Tgs.EmailBucket");
+        private readonly MeterListener _Listener;
 
-        static EmailMetrics()
+        public void AddEmailCount() => _ProcessEmailCount.Add(1);
+
+        public EmailMetrics()
         {
             _ProcessEmails = _meter.CreateHistogram<int>("processing.email.count");
+            _ProcessEmailCount = _meter.CreateCounter<int>("process-email-count");
 
             _ = _meter.CreateObservableGauge(
                 "email.memory.available",
@@ -33,19 +38,13 @@ namespace TGS.EmailApi.Metrics
                     return new Measurement<long>(totalMemory);
                 });
 
-            _ = _meter.CreateObservableGauge("processing.emails", () => 
-            {
-                Console.WriteLine($"processing.emails => {_ProcessPlayerCount}");
-                return _ProcessPlayerCount;
-            }, "numbers of email");
+            _ = _meter.CreateCounter<int>("email-count", "Email");
 
             _Listener = new MeterListener();
-
             _Listener.EnableMeasurementEvents(_ProcessEmails);
 
             _Listener.SetMeasurementEventCallback<int>((instrument, measurement, tags, state) =>
             {
-                _ProcessPlayerCount = measurement;
                 Console.WriteLine($"SetMeasurementEventCallback => Instrument: {instrument.Name} has recorded the measurement {measurement}");
             });
 

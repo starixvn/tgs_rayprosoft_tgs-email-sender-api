@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using TGS.EmailApi.Metrics;
 using TGS.EmailApi.Models;
 using TGS.EmailApi.Services;
 
@@ -17,11 +18,15 @@ namespace TGS.EmailApi.Controllers
         private static readonly ActivitySource _emailControllerSource = new($"TGS.EmailApi.Controller.{nameof(EmailController)}");
         private readonly ILogger<EmailController> _logger;
         private readonly IEmailService _emailService;
+        private readonly EmailMetrics _metrics;
 
-        public EmailController(ILogger<EmailController> logger, IEmailService emailService)
+        public EmailController(ILogger<EmailController> logger, 
+            [FromServices] IEmailService emailService,
+            [FromServices] EmailMetrics metrics)
         {
             _logger = logger;
             _emailService = emailService;
+            _metrics = metrics;
         }
 
         [HttpPost]
@@ -44,6 +49,7 @@ namespace TGS.EmailApi.Controllers
                 _logger.LogInformation($"Receiver:{String.Join(',', sendEmailRequest.Receivers)}");
                 _logger.LogInformation($"Content:{sendEmailRequest.Content}");
                 await _emailService.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
+                _metrics.AddEmailCount();
                 return new SendEmailResponse();
             }
             catch (SmtpFailedRecipientsException ex)
