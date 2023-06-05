@@ -67,6 +67,5 @@ namespace TGS.EmailApi.Metrics
         public void RecordNumberOfBooks(int amount) => NumberOfBooksPerOrderHistogram.Record(amount);
         public void IncreaseOrdersCanceled() => _ordersCanceled++;
         public void IncreaseTotalOrders(string city) => TotalOrdersCounter.Add(1, KeyValuePair.Create<string, object>("City", city));
-
     }
 }
