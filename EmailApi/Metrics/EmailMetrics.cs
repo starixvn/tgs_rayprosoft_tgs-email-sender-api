@@ -11,6 +11,7 @@ namespace TGS.EmailApi.Metrics
         private Counter<int> _ProcessEmailCount  { get; }
         private readonly Meter _meter = new("Tgs.EmailBucket");
         private readonly MeterListener _Listener;
+        private static int _processEmailCount;
 
         public void AddEmailCount() => _ProcessEmailCount.Add(1);
 
@@ -44,6 +45,7 @@ namespace TGS.EmailApi.Metrics
 
             _Listener.SetMeasurementEventCallback<int>((instrument, measurement, tags, state) =>
             {
+                _processEmailCount = measurement;
                 Console.WriteLine($"SetMeasurementEventCallback => Instrument: {instrument.Name} has recorded the measurement {measurement}");
             });
 

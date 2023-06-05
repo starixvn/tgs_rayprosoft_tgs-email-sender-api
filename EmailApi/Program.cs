@@ -49,6 +49,8 @@ builder.Logging
         });
     });
 
+var meters = new OtelMetrics();
+
 builder.Services
     .AddOpenTelemetry()
         .WithTracing(builder => builder
@@ -61,12 +63,20 @@ builder.Services
         .AddProfileViewExporter()
         .AddOtlpExporter())
     .WithMetrics(meterBuiler => meterBuiler
-        .SetResourceBuilder(ResourceBuilder.CreateDefault()
+        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("BookStore.WebApi")
             .AddEnvironmentVariableDetector())
             .AddMeter("Tgs.EmailBucket")
+            .AddMeter(meters.MetricName)
             .AddInstrumentation<EmailMetrics>()
+            .AddInstrumentation<OtelMetrics>()
             .AddRuntimeInstrumentation()
             .AddAspNetCoreInstrumentation()
+            .AddView(
+                instrumentName: "orders-price",
+                new ExplicitBucketHistogramConfiguration { Boundaries = new double[] { 15, 30, 45, 60, 75 } })
+            .AddView(
+                instrumentName: "orders-number-of-books",
+                new ExplicitBucketHistogramConfiguration { Boundaries = new double[] { 1, 2, 5 } })
             .AddOtlpExporter())
     .Services
     .Configure<AspNetCoreInstrumentationOptions>(options =>
