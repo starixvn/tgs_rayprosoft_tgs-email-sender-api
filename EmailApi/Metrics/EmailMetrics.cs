@@ -17,6 +17,8 @@ namespace TGS.EmailApi.Metrics
         {
             _ProcessEmailCount.Add(1);
             _processEmailCount++;
+            Console.WriteLine($"AddEmailCount => {_processEmailCount}");
+            Console.WriteLine($"_ProcessEmailCount.Name => {_ProcessEmailCount.Name}");
         } 
 
         public EmailMetrics()
