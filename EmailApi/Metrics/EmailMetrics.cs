@@ -42,7 +42,13 @@ namespace TGS.EmailApi.Metrics
                     return new Measurement<long>(totalMemory);
                 });
 
-            _ = _meter.CreateObservableCounter("email-count", () => _processEmailCount, "numbers of email");
+            _ = _meter.CreateObservableCounter(
+                "email-count", () =>
+                {
+                    Console.WriteLine($"email.count => {_processEmailCount}");
+                    return _processEmailCount;
+                }, 
+                "numbers of email");
 
             _ProcessEmailCount = _meter.CreateCounter<int>("email-count", "Email");
 
