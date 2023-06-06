@@ -52,7 +52,7 @@ namespace TGS.EmailApi.Metrics
                 }, 
                 "numbers of email");
 
-            _ProcessEmailCount = _meter.CreateCounter<int>("email-count", "Email");
+            _ProcessEmailCount = _meter.CreateCounter<int>("email-count22", "Email");
 
             _Listener = new MeterListener();
             _Listener.EnableMeasurementEvents(_ProcessEmails);

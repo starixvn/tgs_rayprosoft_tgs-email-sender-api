@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 
 namespace TGS.EmailApi.Metrics
@@ -46,6 +47,23 @@ namespace TGS.EmailApi.Metrics
             NumberOfBooksPerOrderHistogram = meter.CreateHistogram<int>("orders-number-of-books", "Books", "Number of books per order");
             OrdersCanceledCounter = meter.CreateObservableCounter<int>("orders-canceled", () => _ordersCanceled);
             TotalOrdersCounter = meter.CreateCounter<int>("total-orders", "Orders");
+
+            var listener = new MeterListener();
+            listener.EnableMeasurementEvents(OrdersPriceHistogram);
+            listener.EnableMeasurementEvents(NumberOfBooksPerOrderHistogram);
+
+            listener.SetMeasurementEventCallback<int>((instrument, measurement, tags, state) =>
+            {
+                Console.WriteLine($"OtelMetrics => SetMeasurementEventCallback => Instrument: {instrument.Name} has recorded the measurement {measurement}");
+            });
+
+            listener.InstrumentPublished = (instrument, meterListener) =>
+            {
+                meterListener.EnableMeasurementEvents(instrument);
+                Console.WriteLine($"OtelMetrics => InstrumentPublished => EnableMeasurementEvents {instrument.Name} ");
+            };
+
+            listener.Start();
         }
 
         //Books meters
