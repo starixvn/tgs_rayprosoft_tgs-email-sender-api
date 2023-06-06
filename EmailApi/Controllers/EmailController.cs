@@ -48,8 +48,8 @@ namespace TGS.EmailApi.Controllers
             {
                 _logger.LogInformation($"Receiver:{String.Join(',', sendEmailRequest.Receivers)}");
                 _logger.LogInformation($"Content:{sendEmailRequest.Content}");
-                await _emailService.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
                 _metrics.AddEmailCount();
+                await _emailService.SendEmailAsync(mailMessage, _emailControllerSource).ConfigureAwait(false);
                 return new SendEmailResponse();
             }
             catch (SmtpFailedRecipientsException ex)
