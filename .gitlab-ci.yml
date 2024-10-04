@@ -48,26 +48,7 @@ push-docker-image:
     policy: pull
 
 push-k8s-template:
-  stage: publish
-  needs:
-    - unit-test
-  only:
-    - master
-  script:
-    - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
-    - mkdir -p artifacts/k8s
-    - cp -R deployment/k8s/$HelmTemplateFolderName artifacts/k8s/
-    - |
-      yq -i e '
-        .image.repository = strenv(ImageName) |
-        .image.tag = strenv(Tag)
-      ' artifacts/k8s/$HelmTemplateFolderName/values.yaml
-  artifacts:
-    name: HelmTemplate
-    untracked: false
-    expire_in: "180 days"
-    paths:
-      - artifacts/**/*
+  extends: .push-k8s-template
 
 deploy-dev:
   variables:
