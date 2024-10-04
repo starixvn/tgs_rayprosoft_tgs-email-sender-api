@@ -1,15 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>TGS.EmailApi.Tests</AssemblyName>
     <RootNamespace>TGS.EmailApi.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JunitXml.TestLogger" Version="3.0.124" />
-    <PackageReference Include="Moq" Version="4.18.4" />
-    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="FluentdForward.OpenTelemetry.Exporter.Logs" Version="0.4.1" />
+    <PackageReference Include="FluentdForward.OpenTelemetry.MessagePack" Version="0.4.1" />
+    <PackageReference Include="JunitXml.TestLogger" Version="4.0.254" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="Tgs.Interceptors" Version="0.2.1" />
+    <PackageReference Include="TGS.ServiceUtility" Version="0.2.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.abstractions" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>

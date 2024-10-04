@@ -18,15 +18,19 @@ namespace TGS.EmailApi.Controllers
         private static readonly ActivitySource _emailControllerSource = new($"TGS.EmailApi.Controller.{nameof(EmailController)}");
         private readonly ILogger<EmailController> _logger;
         private readonly IEmailService _emailService;
+        private readonly ITelegramService _telegramService;
         private readonly EmailMetrics _metrics;
 
         public EmailController(ILogger<EmailController> logger, 
             [FromServices] IEmailService emailService,
-            [FromServices] EmailMetrics metrics)
+            [FromServices] EmailMetrics metrics,
+            [FromServices] ITelegramService telegramService)
         {
             _logger = logger;
             _emailService = emailService;
             _metrics = metrics;
+            _telegramService = telegramService;
+
         }
 
         [HttpPost]
