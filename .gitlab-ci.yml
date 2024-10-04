@@ -1,3 +1,8 @@
+include:
+  - project: rayprosoft/tgs-ci-scripts
+    ref: main
+    file: GitLab/Templates/gitlab-job-templates.yml
+
 variables:
   ImageName: pgtgs/email-api
   TgsSettingKey: email-api
@@ -24,22 +29,7 @@ build-code:
     untracked: true   
 
 unit-test:
-  stage: test
-  script:
-    - dotnet test -c $BuildConfiguration -l:"junit;LogFilePath=../TestReports/{assembly}-TestReport.xml" --no-restore --no-build
-  needs:
-    - build-code
-  only:
-    - merge_requests
-    - master
-  artifacts:
-    when: always
-    reports:
-      junit: ./TestReports/*-TestReport.xml
-  cache:
-    key: $BuildCacheKey
-    untracked: true   
-    policy: pull
+  extends: .unit-test-template
 
 push-docker-image:
   stage: publish
