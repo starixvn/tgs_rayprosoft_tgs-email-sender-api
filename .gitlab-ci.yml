@@ -81,8 +81,7 @@ deploy-dev:
   stage: deploy-dev
   needs:
     - push-docker-image
-    - job: push-k8s-template
-      artifacts: true
+    - push-k8s-template
   only:
     - master
   before_script:
@@ -132,8 +131,7 @@ deploy-staging:
   stage: deploy-staging
   needs:
     - deploy-dev
-    - job: push-k8s-template
-      artifacts: true
+    - push-k8s-template
   only:
     - master
   when: manual
@@ -185,8 +183,7 @@ deploy-prod:
   stage: deploy-prod
   needs:
     - deploy-staging
-    - job: push-k8s-template
-      artifacts: true
+    - push-k8s-template
   only:
     - master
   when: manual
