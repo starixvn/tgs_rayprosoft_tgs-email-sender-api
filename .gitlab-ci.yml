@@ -29,7 +29,29 @@ build-code:
     untracked: true   
 
 unit-test:
-  extends: .unit-test-template
+  variables:
+    GIT_STRATEGY: none
+    Framework: net8.0
+  stage: test
+  script:
+    - dotnet test "**/bin/$BuildConfiguration/$Framework/*Tests.dll" -l:'junit;LogFilePath=TestResults/TestResults.xml'
+  needs:
+    - build-code
+  only:
+    - merge_requests
+    - main
+  cache:
+    key: $BuildCacheKey
+    untracked: true
+    policy: pull
+  artifacts:
+    when: always
+    reports:
+      junit: ./TestResults/*.xml
+  tags:
+    - dotnet
+    - linux
+
 
 push-docker-image:
   stage: publish
