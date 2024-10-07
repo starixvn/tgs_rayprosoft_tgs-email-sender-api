@@ -1,8 +1,3 @@
-include:
-  - project: rayprosoft/tgs-ci-scripts
-    ref: main
-    file: GitLab/Templates/gitlab-job-templates.yml
-
 variables:
   ImageName: pgtgs/email-api
   TgsSettingKey: email-api
@@ -29,29 +24,22 @@ build-code:
     untracked: true   
 
 unit-test:
-  variables:
-    GIT_STRATEGY: none
-    Framework: net8.0
   stage: test
   script:
-    - dotnet test "**/bin/$BuildConfiguration/$Framework/*Tests.dll" -l:'junit;LogFilePath=TestResults/TestResults.xml'
+    - dotnet test -c $BuildConfiguration -l:"junit;LogFilePath=../TestReports/{assembly}-TestReport.xml" --no-restore --no-build
   needs:
     - build-code
   only:
     - merge_requests
-    - main
-  cache:
-    key: $BuildCacheKey
-    untracked: true
-    policy: pull
+    - master
   artifacts:
     when: always
     reports:
-      junit: ./TestResults/*.xml
-  tags:
-    - dotnet
-    - linux
-
+      junit: ./TestReports/*-TestReport.xml
+  cache:
+    key: $BuildCacheKey
+    untracked: true   
+    policy: pull
 
 push-docker-image:
   stage: publish
@@ -70,7 +58,26 @@ push-docker-image:
     policy: pull
 
 push-k8s-template:
-  extends: .push-k8s-template
+  stage: publish
+  needs:
+    - unit-test
+  only:
+    - master
+  script:
+    - export Tag="$(date -d $CI_PIPELINE_CREATED_AT +%Y%m%d%H%M).$CI_PIPELINE_IID"
+    - mkdir -p artifacts/k8s
+    - cp -R deployment/k8s/$HelmTemplateFolderName artifacts/k8s/
+    - |
+      yq -i e '
+        .image.repository = strenv(ImageName) |
+        .image.tag = strenv(Tag)
+      ' artifacts/k8s/$HelmTemplateFolderName/values.yaml
+  artifacts:
+    name: HelmTemplate
+    untracked: false
+    expire_in: "180 days"
+    paths:
+      - artifacts/**/*
 
 deploy-dev:
   variables:
@@ -81,7 +88,8 @@ deploy-dev:
   stage: deploy-dev
   needs:
     - push-docker-image
-    - push-k8s-template
+    - job: push-k8s-template
+      artifacts: true
   only:
     - master
   before_script:
@@ -131,7 +139,8 @@ deploy-staging:
   stage: deploy-staging
   needs:
     - deploy-dev
-    - push-k8s-template
+    - job: push-k8s-template
+      artifacts: true
   only:
     - master
   when: manual
@@ -183,7 +192,8 @@ deploy-prod:
   stage: deploy-prod
   needs:
     - deploy-staging
-    - push-k8s-template
+    - job: push-k8s-template
+      artifacts: true
   only:
     - master
   when: manual
