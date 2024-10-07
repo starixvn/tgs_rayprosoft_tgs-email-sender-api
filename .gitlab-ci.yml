@@ -25,6 +25,10 @@ build-code:
 
 unit-test:
   stage: test
+  variables:
+    GIT_STRATEGY: none
+    Framework: net8.0
+    BuildConfiguration: Debug
   script:
     - dotnet test "**/bin/$BuildConfiguration/$Framework/*Tests.dll" -l:'junit;LogFilePath=TestResults/TestResults.xml'
   needs:
